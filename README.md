@@ -1,6 +1,9 @@
 # pewpewpew
 An HTML5 shooting game using the [Quintus](http://www.html5quintus.com/) game engine. Why? Because pew pew.
 
+<br>
+Play the game [here](http://verypewpewpew.herokuapp.com/) (powered by our Lord and saviour Heroku).
+
 ### Setting up dev environement
 A server is necessary because Quintus requires some .json files in order to animate the sprites. Run 
 <br> **_pip install -r requirements.txt_**
