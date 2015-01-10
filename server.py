@@ -1,5 +1,5 @@
 import json
-from bottle import route, run, debug, static_file
+from bottle import route, run, debug, static_file, os
 
 @route("/")
 def home():
@@ -12,4 +12,4 @@ def home():
 def server_static(filepath):
     return static_file(filepath, root='')
 
-run(host='localhost', port=8000, debug=True)
+run(host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
