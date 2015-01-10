@@ -36,7 +36,7 @@ Q.Sprite.extend("Player", {
 
 		this.add("animation");
 		this.play("default");
-		this.add("Gun");
+		this.add("FriendlyGun");
 		this.on("hit", function(col){
 			if(col.obj.isA("Shot") && ((col.obj.p.type & Q.SPRITE_ENEMY) == Q.SPRITE_ENEMY)){
 				this.destroy();
@@ -109,7 +109,7 @@ Q.component("BasicAI", {
 		this.entity.changeDirections();
 		this.entity.on("step", this, "move");
 		this.entity.on("step", this, "tryToFire");
-		this.entity.add("Gun");
+		this.entity.add("AlienGun");
 	},
 	extend: {
 		changeDirections: function(){
@@ -141,49 +141,8 @@ Q.component("BasicAI", {
 		}
 });
 
-Q.component("Gun", {
-	added: function(){ // executes as soon as component is added
-		this.entity.p.shots = []; // this is where we will store all the shots the sprite has fired
-		this.entity.p.canFire = true;
-		this.entity.on("step", "handleFiring");
-	},
-
-	extend: {
-		handleFiring: function(dt){
-
-			// remove shots from the array of shots
-			for(var i = this.p.shots.length - 1; i>=0; i--){
-				if(this.p.shots[i].isDestroyed){
-					this.p.shots.splice(i, 1);
-				}
-			}
-
-			if(Q.inputs['fire'] && this.p.type == Q.SPRITE_FRIENDLY){
-				this.fire(Q.SPRITE_FRIENDLY);
-			}
-		},
-		fire: function(type){
-			var entity = this;
-
-			if(!entity.p.canFire)
-				return;
-
-			var shot;
-			if(type == Q.SPRITE_FRIENDLY){
-				shot = Q.stage().insert(new Q.Shot({ x: entity.p.x, y: entity.p.y - 80, speed: 200, type: Q.SPRITE_DEFAULT | Q.SPRITE_FRIENDLY}));	
-			}
-			else{
-				shot = Q.stage().insert(new Q.Shot({ x: entity.p.x, y: entity.p.y + entity.p.h - 20, speed: -200, type: Q.SPRITE_DEFAULT | Q.SPRITE_ENEMY}));	
-			}
-
-			entity.p.shots.push(shot);
-			entity.p.canFire = false;
-			setTimeout(function(){
-				entity.p.canFire = true;
-			}, 500);
-		}
-	}
-});
+Q.component("FriendlyGun", new Gun(500,500))
+Q.component("AlienGun", new Gun(300,600));
 
 Q.scene("mainLevel", function(stage){
 	Q.gravity = 0;
@@ -224,3 +183,54 @@ Q.load(["background-city.jpg", "spritesheet_new.png", "player.json", "shot.png",
 	Q.stageScene("endGame", 1, { label: "Time to shoot!" });
 	//Q.stageScene("mainLevel");
 });
+
+
+/**
+ * Constructs a new gun object with properties that are understood
+ * if used in to a Q.component() method argument 
+ * @param {int} minimumFiringPause Shortest allowed time between firing
+ * @param {int} maximumFiringPause Longest allowed time between firing
+ */
+function Gun(minimumFiringPause, maximumFiringPause) {
+	this.added = function(){ // executes as soon as component is added
+		this.entity.p.shots = []; // this is where we will store all the shots the sprite has fired
+		this.entity.p.canFire = true;
+		this.entity.on("step", "handleFiring");
+	};
+
+	this.extend = {
+		handleFiring: function(dt){
+
+			// remove shots from the array of shots
+			for(var i = this.p.shots.length - 1; i>=0; i--){
+				if(this.p.shots[i].isDestroyed){
+					this.p.shots.splice(i, 1);
+				}
+			}
+
+			if(Q.inputs['fire'] && this.p.type == Q.SPRITE_FRIENDLY){
+				this.fire(Q.SPRITE_FRIENDLY);
+			}
+		},
+		fire: function(type){
+			var entity = this;
+
+			if(!entity.p.canFire)
+				return;
+
+			var shot;
+			if(type == Q.SPRITE_FRIENDLY){
+				shot = Q.stage().insert(new Q.Shot({ x: entity.p.x, y: entity.p.y - 80, speed: 200, type: Q.SPRITE_DEFAULT | Q.SPRITE_FRIENDLY}));	
+			}
+			else{
+				shot = Q.stage().insert(new Q.Shot({ x: entity.p.x, y: entity.p.y + entity.p.h - 20, speed: -200, type: Q.SPRITE_DEFAULT | Q.SPRITE_ENEMY}));	
+			}
+
+			entity.p.shots.push(shot);
+			entity.p.canFire = false;
+			setTimeout(function(){
+				entity.p.canFire = true;
+			}, utilities.randomIntFromInterval(minimumFiringPause, maximumFiringPause));
+		}
+	};
+}
