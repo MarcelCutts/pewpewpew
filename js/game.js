@@ -3,18 +3,21 @@ var clamp = function(x, min, max){
 	return x < min ? min : ( x > max ? max : x);
 };
 
-var Q = Quintus()
-	.include("Sprites, Anim, Input, Touch, Scenes, UI")
-	.setup({width: 1152, height: 648 }) // maximize: true for full screen; scaleToFit: true
+// creating an instance of the game engine
+var Q = Quintus( { development: true } ) // pass in { development: true } to run on development mode. This will force assets to reload at every refresh
+	.include("Sprites, Anim, Input, Touch, Scenes, UI") // including the Modules
+	.setup({width: $(window).width()*0.75, height: $(window).height()*0.75, scaleToFit: true }) // setup binds the engine to canvas. maximize: true for full screen; scaleToFit: true
 	.touch();
 
+// specify display ruled for the touch controls
+// these are only visible on phone/tablet
 Q.input.touchControls({
 	controls:
 	[
 		['left', '<'],
 		['right', '>'],
-		[],
-		[],
+		[], // empty controls to enleave empty space in the middle
+		[], // and make the existing controls smaller
 		[],
 		[],
 		['fire', 'a']

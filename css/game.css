@@ -1,0 +1,42 @@
+body {
+	background-color: #2C3E50;
+}
+
+.title {
+	font-weight: bold;
+}
+
+.middle {
+	vertical-align: middle;
+}
+
+.github-logo{
+	border: solid 1px #2C3E50;
+	border-radius: 5px;
+}
+
+.github-logo:hover {
+	border: solid 1px white;
+	border-radius: 5px;
+	background-color: #67809F;
+}
+
+#instructions {
+	font-family: 'Ubuntu', sans-serif;
+    margin-left: auto;
+    margin-right: auto;
+	width: 70%;
+	border: solid 1px white;
+	border-radius: 15px;
+	padding-left: 10px;
+	background-color: #67809F;
+	text-align: center;
+	color: #FFFFFF;
+}
+
+#github {
+	font-family: 'Ubuntu', sans-serif;
+	margin-top: 20px;
+	color: #FFFFFF;
+	float: right;
+}
